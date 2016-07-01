@@ -4,10 +4,18 @@ var favicon = require('serve-favicon');
 var logger = require('morgan');
 var cookieParser = require('cookie-parser');
 var bodyParser = require('body-parser');
-var debug = require('debug')('simplke-node-:server');
+var debug = require('debug');
 var http = require('http');
 var path = require('path');
 var RED = require('node-red');
+
+/**
+ * Logger
+ */
+var Logger = {
+	debug: debug('simple-node-red-server:app'),
+	error: debug('simple-node-red-server:app:error')
+};
 
 var routes = require('./routes/index');
 var auth = require('./routes/auth');
@@ -53,8 +61,8 @@ var settings;
 try {
 	settings = require(SETTINGS_PATH);
 } catch (e) {
-	debug('Fail to load settings from ' + SETTINGS_PATH);
-	debug('Loading default settings');
+	Logger.debug('Fail to load settings from ' + SETTINGS_PATH);
+	Logger.debug('Loading default settings');
 	settings = {
 		httpAdminRoot: '/admin',
 		httpNodeRoot: '/api',
@@ -150,11 +158,11 @@ function onError(error) {
 	// handle specific listen errors with friendly messages
 	switch (error.code) {
 	case 'EACCES':
-		console.error(bind + ' requires elevated privileges');
+		Logger.error(bind + ' requires elevated privileges');
 		process.exit(1);
 		break;
 	case 'EADDRINUSE':
-		console.error(bind + ' is already in use');
+		Logger.error(bind + ' is already in use');
 		process.exit(1);
 		break;
 	default:
@@ -169,7 +177,7 @@ function onError(error) {
 function onListening() {
 	var addr = server.address();
 	var bind = typeof addr === 'string' ? 'pipe ' + addr : 'port ' + addr.port;
-	debug('Listening on ' + bind);
+	Logger.debug('Listening on ' + bind);
 }
 
 module.exports = app;
