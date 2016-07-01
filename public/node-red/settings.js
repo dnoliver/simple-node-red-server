@@ -17,6 +17,11 @@
 // The `https` setting requires the `fs` module. Uncomment the following
 // to make it available:
 //var fs = require("fs");
+var path = require('path');
+
+var USER_DIR_PATH = path.resolve('./public/node-red');
+var NODES_PATH = path.resolve('./public/node-red/nodes');
+var SETTINGS_PATH = path.resolve('./public/node-red/settings.js');
 
 module.exports = {
 	// the tcp port that the Node-RED web server is listening on
@@ -48,7 +53,7 @@ module.exports = {
 	debugMaxLength: 1000,
 
 	// The file containing the flows. If not set, it defaults to flows_<hostname>.json
-	//flowFile: 'flows.json',
+	flowFile: 'flows.json',
 
 	// To enabled pretty-printing of the flow within the flow file, set the following
 	//  property to true:
@@ -56,11 +61,11 @@ module.exports = {
 
 	// By default, all user data is stored in the Node-RED install directory. To
 	// use a different location, the following property can be used
-	//userDir: '/home/nol/.node-red/',
+	userDir: USER_DIR_PATH,
 
 	// Node-RED scans the `nodes` directory in the install directory to find nodes.
 	// The following property can be used to specify an additional directory to scan.
-	//nodesDir: '/home/nol/.node-red/nodes',
+	nodesDir: NODES_PATH,
 
 	// By default, the Node-RED UI is available at http://localhost:1880/
 	// The following property can be used to specifiy a different root path.

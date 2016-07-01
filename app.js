@@ -52,8 +52,8 @@ var server = http.createServer(app);
 /**
  * Start Node Red process
  */
-var USER_DIR_PATH = path.resolve('./public/.node-red');
-var SETTINGS_PATH = path.resolve('./settings.js');
+var USER_DIR_PATH = path.resolve('./public/node-red');
+var SETTINGS_PATH = path.resolve('./public/node-red/settings.js');
 
 // Create the settings object - see default settings.js file for other options
 var settings;

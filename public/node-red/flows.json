@@ -1,0 +1,31 @@
+[{
+	"id": "3f03076d.136c78",
+	"type": "http in",
+	"z": "7c174482.a41b8c",
+	"name": "GET /hello",
+	"url": "/hello",
+	"method": "get",
+	"swaggerDoc": "",
+	"x": 137,
+	"y": 154,
+	"wires": [["b35b9703.aed608"]]
+}, {
+	"id": "b35b9703.aed608",
+	"type": "function",
+	"z": "7c174482.a41b8c",
+	"name": "Generate Message",
+	"func": "msg.payload = \"Hello World\";\nreturn msg;",
+	"outputs": 1,
+	"noerr": 0,
+	"x": 369,
+	"y": 151,
+	"wires": [["cf240ec1.55b22"]]
+}, {
+	"id": "cf240ec1.55b22",
+	"type": "http response",
+	"z": "7c174482.a41b8c",
+	"name": "SEND /hello",
+	"x": 609,
+	"y": 148,
+	"wires": []
+}]
