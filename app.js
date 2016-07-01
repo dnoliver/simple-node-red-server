@@ -4,6 +4,10 @@ var favicon = require('serve-favicon');
 var logger = require('morgan');
 var cookieParser = require('cookie-parser');
 var bodyParser = require('body-parser');
+var debug = require('debug')('node-red:server');
+var http = require('http');
+var path = require('path');
+var RED = require('node-red');
 
 var routes = require('./routes/index');
 
@@ -23,7 +27,43 @@ app.use(bodyParser.urlencoded({
 app.use(cookieParser());
 app.use(express.static(path.join(__dirname, 'public')));
 
+/**
+ * Get port from environment and store in Express.
+ */
+
+var port = normalizePort(process.env.PORT || '3000');
+app.set('port', port);
+
+/**
+ * Create HTTP server.
+ */
+
+var server = http.createServer(app);
+
+/**
+ * Start Node Red process
+ */
+var USER_DIR_PATH = path.resolve('./public/.node-red');
+var SETTINGS_PATH = path.resolve('./settings.js');
+
+// Create the settings object - see default settings.js file for other options
+var settings = {
+    httpAdminRoot: '/red',
+    httpNodeRoot: '/api',
+    userDir: USER_DIR_PATH,
+    functionGlobalContext: { }    // enables global context
+};
+
+// Initialise the runtime with a server and settings
+RED.init(server,settings);
+
 app.use('/', routes);
+
+// Serve the editor UI from /red
+app.use(settings.httpAdminRoot,RED.httpAdmin);
+
+// Serve the http nodes UI from /api
+app.use(settings.httpNodeRoot,RED.httpNode);
 
 // catch 404 and forward to error handler
 app.use(function (req, res, next) {
@@ -56,5 +96,75 @@ app.use(function (err, req, res, next) {
 	});
 });
 
+/**
+ * Listen on provided port, on all network interfaces.
+ */
+
+server.listen(port);
+server.on('error', onError);
+server.on('listening', onListening);
+
+// Start the runtime
+RED.start();
+
+/**
+ * Normalize a port into a number, string, or false.
+ */
+
+function normalizePort(val) {
+  var port = parseInt(val, 10);
+
+  if (isNaN(port)) {
+    // named pipe
+    return val;
+  }
+
+  if (port >= 0) {
+    // port number
+    return port;
+  }
+
+  return false;
+}
+
+/**
+ * Event listener for HTTP server "error" event.
+ */
+
+function onError(error) {
+  if (error.syscall !== 'listen') {
+    throw error;
+  }
+
+  var bind = typeof port === 'string'
+    ? 'Pipe ' + port
+    : 'Port ' + port;
+
+  // handle specific listen errors with friendly messages
+  switch (error.code) {
+    case 'EACCES':
+      console.error(bind + ' requires elevated privileges');
+      process.exit(1);
+      break;
+    case 'EADDRINUSE':
+      console.error(bind + ' is already in use');
+      process.exit(1);
+      break;
+    default:
+      throw error;
+  }
+}
+
+/**
+ * Event listener for HTTP server "listening" event.
+ */
+
+function onListening() {
+  var addr = server.address();
+  var bind = typeof addr === 'string'
+    ? 'pipe ' + addr
+    : 'port ' + addr.port;
+  debug('Listening on ' + bind);
+}
 
 module.exports = app;
