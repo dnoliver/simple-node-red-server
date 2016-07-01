@@ -4,12 +4,13 @@ var favicon = require('serve-favicon');
 var logger = require('morgan');
 var cookieParser = require('cookie-parser');
 var bodyParser = require('body-parser');
-var debug = require('debug')('node-red:server');
+var debug = require('debug')('simplke-node-:server');
 var http = require('http');
 var path = require('path');
 var RED = require('node-red');
 
 var routes = require('./routes/index');
+var auth = require('./routes/auth');
 
 var app = express();
 
@@ -47,23 +48,31 @@ var USER_DIR_PATH = path.resolve('./public/.node-red');
 var SETTINGS_PATH = path.resolve('./settings.js');
 
 // Create the settings object - see default settings.js file for other options
-var settings = {
-    httpAdminRoot: '/red',
-    httpNodeRoot: '/api',
-    userDir: USER_DIR_PATH,
-    functionGlobalContext: { }    // enables global context
-};
+var settings;
+
+try {
+	settings = require(SETTINGS_PATH);
+} catch (e) {
+	debug('Fail to load settings from ' + SETTINGS_PATH);
+	debug('Loading default settings');
+	settings = {
+		httpAdminRoot: '/admin',
+		httpNodeRoot: '/api',
+		userDir: USER_DIR_PATH,
+		functionGlobalContext: {} // enables global context
+	};
+}
 
 // Initialise the runtime with a server and settings
-RED.init(server,settings);
+RED.init(server, settings);
 
 app.use('/', routes);
 
 // Serve the editor UI from /red
-app.use(settings.httpAdminRoot,RED.httpAdmin);
+app.use(settings.httpAdminRoot, RED.httpAdmin);
 
 // Serve the http nodes UI from /api
-app.use(settings.httpNodeRoot,RED.httpNode);
+app.use(settings.httpNodeRoot, RED.httpNode);
 
 // catch 404 and forward to error handler
 app.use(function (req, res, next) {
@@ -112,19 +121,19 @@ RED.start();
  */
 
 function normalizePort(val) {
-  var port = parseInt(val, 10);
+	var port = parseInt(val, 10);
 
-  if (isNaN(port)) {
-    // named pipe
-    return val;
-  }
+	if (isNaN(port)) {
+		// named pipe
+		return val;
+	}
 
-  if (port >= 0) {
-    // port number
-    return port;
-  }
+	if (port >= 0) {
+		// port number
+		return port;
+	}
 
-  return false;
+	return false;
 }
 
 /**
@@ -132,27 +141,25 @@ function normalizePort(val) {
  */
 
 function onError(error) {
-  if (error.syscall !== 'listen') {
-    throw error;
-  }
+	if (error.syscall !== 'listen') {
+		throw error;
+	}
 
-  var bind = typeof port === 'string'
-    ? 'Pipe ' + port
-    : 'Port ' + port;
+	var bind = typeof port === 'string' ? 'Pipe ' + port : 'Port ' + port;
 
-  // handle specific listen errors with friendly messages
-  switch (error.code) {
-    case 'EACCES':
-      console.error(bind + ' requires elevated privileges');
-      process.exit(1);
-      break;
-    case 'EADDRINUSE':
-      console.error(bind + ' is already in use');
-      process.exit(1);
-      break;
-    default:
-      throw error;
-  }
+	// handle specific listen errors with friendly messages
+	switch (error.code) {
+	case 'EACCES':
+		console.error(bind + ' requires elevated privileges');
+		process.exit(1);
+		break;
+	case 'EADDRINUSE':
+		console.error(bind + ' is already in use');
+		process.exit(1);
+		break;
+	default:
+		throw error;
+	}
 }
 
 /**
@@ -160,11 +167,9 @@ function onError(error) {
  */
 
 function onListening() {
-  var addr = server.address();
-  var bind = typeof addr === 'string'
-    ? 'pipe ' + addr
-    : 'port ' + addr.port;
-  debug('Listening on ' + bind);
+	var addr = server.address();
+	var bind = typeof addr === 'string' ? 'pipe ' + addr : 'port ' + addr.port;
+	debug('Listening on ' + bind);
 }
 
 module.exports = app;
