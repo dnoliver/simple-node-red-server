@@ -22,8 +22,21 @@ var path = require('path');
 var USER_DIR_PATH = path.resolve('./public/node-red');
 var NODES_PATH = path.resolve('./public/node-red/nodes');
 var SETTINGS_PATH = path.resolve('./public/node-red/settings.js');
+var ENVIRONMENT = process.env.NODE_ENV || "development";
 
-module.exports = {
+var ADMIN_AUTH = {
+	type: "credentials",
+	users: [{
+		username: ENVIRONMENT === "development"? "admin" : process.env.NODE_RED_ADMIN,
+		password: ENVIRONMENT === "development"? "admin" : process.env.NODE_RED_PASSWORD,
+		permissions: "*"
+    }],
+	default: {
+		permissions: "read"
+	}
+};
+
+var settings = {
 	// the tcp port that the Node-RED web server is listening on
 	uiPort: process.env.PORT || 1880,
 
@@ -91,17 +104,7 @@ module.exports = {
 	// -----------------
 	// To password protect the Node-RED editor and admin API, the following
 	// property can be used. See http://nodered.org/docs/security.html for details.
-	adminAuth: {
-		type: "credentials",
-		users: [{
-			username: process.env.NODE_RED_ADMIN,
-			password: process.env.NODE_RED_PASSWORD,
-			permissions: "*"
-        }],
-		default: {
-			permissions: "read"
-		}
-	},
+	adminAuth: ADMIN_AUTH,
 
 	// To password protect the node-defined HTTP endpoints (httpNodeRoot), or
 	// the static content (httpStatic), the following properties can be used.
@@ -189,4 +192,6 @@ module.exports = {
 			audit: false
 		}
 	}
-}
+};
+
+module.exports = settings;
