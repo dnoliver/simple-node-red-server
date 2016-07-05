@@ -13,6 +13,7 @@
     "express": "~4.13.1",
     "jade": "~1.11.0",
     "morgan": "~1.6.1",
+    "mqtt": "^1.12.0",
     "node-red": "^0.14.3",
     "node-red-contrib-ifttt": "0.0.7",
     "serve-favicon": "~2.3.0"
