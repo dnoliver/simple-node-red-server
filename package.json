@@ -16,6 +16,7 @@
     "mqtt": "^1.12.0",
     "node-red": "^0.14.3",
     "node-red-contrib-ifttt": "0.0.7",
+    "node-red-node-mongodb": "0.0.5",
     "serve-favicon": "~2.3.0"
   },
   "devDependencies": {
