@@ -2,3 +2,4 @@ node_modules/
 public/.node-red/
 /public/node-red/.config.json
 /public/node-red/.sessions.json
+.env
